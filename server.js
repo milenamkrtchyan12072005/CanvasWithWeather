@@ -1,209 +1,196 @@
+weather = "winter"
+//! Requiring modules  --  START
+var Grass = require("./modules/Grass.js");
+var Water = require("./modules/Water.js");
+var GrassEater = require("./modules/GrassEater.js");
+var Predator = require("./modules/Predator.js");
+var DamnDog = require("./modules/DamnDog.js");
+var Krakin = require("./modules/Krakin.js");
+let random = require('./modules/random');
+//! Requiring modules  --  END
 
-weather = "winter";
-GrassArr = [];
-EatgrassArr = [];
+
+//! Setting global arrays  --  START
+grassArr = [];
+grassEaterArr = [];
 predatorArr = [];
-eaterArr = [];
-krakinArr = [];
 damnArr = [];
-GrassStatics = 0;
-Eatgrassstatics = 0;
-predatorStatics = 0;
-eaterStatics = 0;
-krakinstatics = 0;
-damnstatics = 0
+krakinArr = [];
+matrix = [];
+waterArr = [];
+grassHashiv = 0;
+
+waterHashiv = 0;
+grassEaterHashiv = 2;
+predatorHashiv = 1;
+damnHashiv = 1;
+krakinHashiv = 5;
+//! Setting global arrays  -- END
+
+//! Creating MATRIX -- START
+function matrixGenerator(matrixSize, grass, grassEater, predator, damnDog, krakin, water) {
+    for (let i = 0; i < matrixSize; i++) {
+        matrix[i] = [];
+        for (let o = 0; o < matrixSize; o++) {
+            matrix[i][o] = 0;
+        }
+    }
+    for (let i = 0; i < grass; i++) {
+        let customX = Math.floor(random(matrixSize)); // 0-9
+        let customY = Math.floor(random(matrixSize)); // 4
+        matrix[customY][customX] = 1;
+    }
+    for (let i = 0; i < grassEater; i++) {
+        let customX = Math.floor(random(matrixSize));
+        let customY = Math.floor(random(matrixSize));
+        matrix[customY][customX] = 2;
+    }
+    for (let i = 0; i < predator; i++) {
+        let customX = Math.floor(random(matrixSize));
+        let customY = Math.floor(random(matrixSize));
+        matrix[customY][customX] = 3;
+    }
+    for (let i = 0; i < damnDog; i++) {
+        let customX = Math.floor(random(matrixSize));
+        let customY = Math.floor(random(matrixSize));
+        matrix[customY][customX] = 4;
+    }
+    for (let i = 0; i < krakin; i++) {
+        let customX = Math.floor(random(matrixSize));
+        let customY = Math.floor(random(matrixSize));
+        matrix[customY][customX] = 5;
+    }
+    for (let i = 0; i < water; i++) {
+        let customX = Math.floor(random(matrixSize));
+        let customY = Math.floor(random(matrixSize));
+        matrix[customY][customX] = 6;
+    }
+}
+matrixGenerator(40, 5, 5, 5, 5, 5, 5);
+//! Creating MATRIX -- END
 
 
 
-
-EatArr = [];
-eatAr = [];
-
-
-
-
+//! SERVER STUFF  --  START
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-var fs = require('fs');
-
-
-
-
-
-
-
 app.use(express.static("."));
 app.get('/', function (req, res) {
-  res.redirect('index.html');
+    res.redirect('index.html');
 });
-server.listen(3000,function(){
-  console.log('swsqws')
-});
+server.listen(3000);
+//! SERVER STUFF END  --  END
 
 
 
-var cl = false;
-
-
-
-
-io.on("connection", function (socket) {
-  if (cl) {
-    setInterval(drawserverayin, 200);
-    cl = true;
-  }
-});
-
-matrix = fillMatrix(40, 40)
-function fillMatrix(n, m) {
-  var matrix = []
-  for (var i = 0; i < n; i++) {
-    matrix.push([])
-    for (var a = 0; a < m; a++) {
-
-      matrix[i].push(0)
+function creatingObjects() {
+    for (var y = 0; y < matrix.length; y++) {
+        for (var x = 0; x < matrix[y].length; x++) {
+            if (matrix[y][x] == 2) {
+                var grassEater = new GrassEater(x, y);
+                grassEaterArr.push(grassEater);
+                // grassEaterHashiv++;
+            } else if (matrix[y][x] == 1) {
+                var grass = new Grass(x, y);
+                grassArr.push(grass);
+                // grassHashiv++;
+            } else if (matrix[y][x] == 3) {
+                var pred = new Predator(x, y);
+                predatorArr.push(pred);
+                // predatorHashiv++;
+            }
+            else if (matrix[y][x] == 4) {
+                var damn = new DamnDog(x, y);
+                damnArr.push(damn);
+                //damnHashiv++;
+            }
+            else if (matrix[y][x] == 5) {
+                var krakin = new Krakin(x, y);
+                krakinArr.push(krakin);
+                //damnHashiv++;
+            }
+            else if (matrix[y][x] == 6) {
+                var water = new Water(x, y);
+                waterArr.push(water);
+                //damnHashiv++;
+            }
+        }
     }
-  }
-  return matrix
+}
+creatingObjects();
+
+function game() {
+    if (grassArr[0] !== undefined) {
+        for (var i in grassArr) {
+            if (weather != "winter") {
+            grassArr[i].mul();
+        } else if (weather == "summer"){
+            grassArr[i].mul();
+            grassArr[i].mul();
+
+            }
+        }
+    }
+    if (waterArr[0] !== undefined) {
+        for (var i in waterArr) {
+            if (weather != "summer" && weather != "winter") {
+            waterArr[i].mul();
+            }
+        }
+    }
+    if (grassEaterArr[0] !== undefined) {
+        for (var i in grassEaterArr) {
+            grassEaterArr[i].eat();
+        }
+    }
+    if (predatorArr[0] !== undefined) {
+        for (var i in predatorArr) {
+            predatorArr[i].eat();
+        }
+    }
+    if (damnArr[0] !== undefined) {
+        for (var i in damnArr) {
+            damnArr[i].eat();
+        }
+    }
+    if (krakinArr[0] !== undefined) {
+        for (var i in krakinArr) {
+            krakinArr[i].eat();
+        }
+    }
+
+    //! Object to send
+    let sendData = {
+        matrix: matrix,
+        grassCounter: grassHashiv,
+        waterCounter: waterHashiv,
+        grassEaterCounter: grassEaterHashiv,
+        predatorCounter: predatorHashiv,
+        damnCounter: damnHashiv,
+        krakinCounter: krakinHashiv,
+    }
+
+    //! Send data over the socket to clients who listens "data"
+    io.sockets.emit("data", sendData);
 }
 
-
-
-var Grass = require("./modules/Grass.js");
-var Eatgrass = require("./modules/Eatgrass.js");
-var predator = require("./modules/predator.js");
-var eater = require("./modules/eater.js");
-var krakin = require("./modules/heroe.js");
-
-for (var a = 0; a < 700; a++) {
-  var x = Math.floor(Math.random() * 40)
-  var y = Math.floor(Math.random() * 40)
-  matrix[y][x] = 1
-}
-
-for (var c = 0; c < 120; c++) {
-  var x = Math.floor(Math.random() * 40)
-  var y = Math.floor(Math.random() * 40)
-  matrix[y][x] = 3
-}
-for (var d = 0; d < 110; d++) {
-  var x = Math.floor(Math.random() * 40)
-  var y = Math.floor(Math.random() * 40)
-  matrix[y][x] = 4
-}
-for (var e = 0; e < 90; e++) {
-  var x = Math.floor(Math.random() * 40)
-  var y = Math.floor(Math.random() * 40)
-  matrix[y][x] = 5
-}
-for (var b = 0; b < 100; b++) {
-  var x = Math.floor(Math.random() * 40)
-  var y = Math.floor(Math.random() * 40)
-  matrix[y][x] = 2
-}
-
-
-
-for (var y = 0; y < matrix.length; y++) {
-  for (var x = 0; x < matrix[y].length; x++) {
-    if (matrix[y][x] == 1) {
-      var grass = new Grass(x, y, 1)
-      GrassArr.push(grass)
-      GrassStatics++;
-    }
-    else if (matrix[y][x] == 2) {
-      var kt = new Eatgrass(x, y);
-      EatgrassArr.push(kt)
-      Eatgrassstatics++
-    }
-    else if (matrix[y][x] == 3) {
-      var xr = new predator(x, y);
-      predatorArr.push(xr)
-      predatorStatics++
-    }
-    else if (matrix[y][x] == 4) {
-      var am = new eater(x, y);
-      eaterArr.push(am)
-      eaterStatics++
-    }
-    else if (matrix[y][x] == 5) {
-      var ar = new krakin(x, y);
-      krakinArr.push(ar)
-      krakinstatics++
-    }
-  }
-}
-function drawserverayin() {
-  for (var i in GrassArr) {
-    if (weather != "winter") {
-        GrassArr[i].mul();
-    }
-  }
-  for (var i in EatgrassArr) {
-    EatgrassArr[i].eat();
-    EatgrassArr[i].move();
-    if (weather != "spring") {
-        EatgrassArr[i].mul();
-    }
-    EatgrassArr[i].die();
-  }
-  for (var i in predatorArr) {
-    predatorArr[i].eat();
-    predatorArr[i].move();
-    if (weather != "autumn") {
-        predatorArr[i].mult();
-    }
-    predatorArr[i].die();
-  }
-  for (var i in eaterArr) {
-    eaterArr[i].eat();
-    eaterArr[i].move();
-    if (weather != "autumn" || weather != "winter") {
-        eaterArr[i].mult();
-    }
-    eaterArr[i].die();
-  }
-  for (var i in  krakinArr) {
-    krakinArr[i].eat();
-    krakinArr[i].move();
-    krakinArr[i].mul();
-    krakinArr[i].die();
-  }
-
-  let sendData = {
-    matrix: matrix,
-    GrassStatics:GrassStatics,
-    Eatgrassstatics:Eatgrassstatics,
-    predatorStatics:predatorStatics,
-    eaterStatics:eaterStatics,
-    krakinstatics:krakinstatics
-  }
-
-
-  io.sockets.emit("matrix", sendData)
-
-}
-setInterval(drawserverayin, 1000)
-// io.on("connection", function (socket) {
-// });
 
 function changeweather() {
-  if (weather == "winter") {
-    weather = "spring"
-  }
-  else if (weather == "spring") {
-    weather = "summer"
-  }
-  else if (weather == "summer") {
-    weather = "autumn"
-  }
-  else if (weather == "autumn") {
-    weather = "winter"
-  }
-  io.sockets.emit("weather", weather)
+    if (weather == "winter") {
+        weather = "spring"
+    }
+    else if (weather == "spring") {
+        weather = "summer"
+    }
+    else if (weather == "summer") {
+        weather = "autumn"
+    }
+    else if (weather == "autumn") {
+        weather = "winter"
+    }
+    io.sockets.emit("weather", weather)
 }
 setInterval(changeweather, 3000)
-
-setInterval(function(){  }, 3000 )
+setInterval(game, 1000)

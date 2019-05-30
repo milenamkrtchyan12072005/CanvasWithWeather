@@ -2,10 +2,10 @@ var LiveForm = require("./LiveForm");
 var random = require("./random");
 
 
-module.exports = class Grass extends LiveForm {
+module.exports = class Water extends LiveForm {
     constructor(x, y) {
         super(x, y);
-        this.multiply = 0;
+        this.life = 0;
     }
     getNewCoordinates() {
         this.directions = [
@@ -26,25 +26,18 @@ module.exports = class Grass extends LiveForm {
     }
 
     mul() {
-        this.multiply++;
-
+        this.life++;
         let emptyCells = this.chooseCell(0);
         let newCell = random(emptyCells);
 
-
-        if (newCell && this.multiply >= 2) {
-            grassHashiv++;
+        if (newCell && this.life >= 2) {
+            waterHashiv++;
             let x = newCell[0];
             let y = newCell[1];
-            matrix[y][x] = 1;
-            if (grassArr.length < 300) {
-
-                let grass = new Grass(x, y);
-                grassArr.push(grass);
-            }
-            // this.multiply = 0
-
-
+            matrix[y][x] = 6;
+            let water = new Water(x, y);
+            waterArr.push(water);
+            this.life = 0;
         }
     }
 }

@@ -1,166 +1,89 @@
-var weather = "winter"
-var weatherh1 = document.getElementById("weather")
-var socket = io();
-var side = 20;
-var m = 40;
-var n = 40;
+
+//! Setup function fires automatically
 function setup() {
-  frameRate(10);
-  createCanvas(m * side, n * side);
-  background('#acacac');
-  
+
+    var socket = io();
+
+    var side = 20;
+
+    var matrix = [];
+
+    //! Getting DOM objects (HTML elements)
+    let grassCountElement = document.getElementById('grassCount');
+    let waterCountElement = document.getElementById('waterCount');
+    let grassEaterCountElement = document.getElementById('grassEaterCount');
+    let predatorCountElement = document.getElementById('predatorCount');
+    let damnCountElement = document.getElementById('damnCount');
+    let krakinCountElement = document.getElementById('krakinCount');
+
+    //! adding socket listener on "data" <-- name, after that fire 'drawCreatures' function 
+
+
+    socket.on("weather", function (w) {
+        weather = w;
+        console.log(weather);
+        weather.innerHTML = weather
+    });
+
+    function drawCreatures(data) {
+        // console.log('matrix[0].length', matrix[0].length);
+        
+        //! after getting data pass it to matrix variable
+        matrix = data.matrix;
+        grassCountElement.innerText = data.grassCounter;
+        waterCountElement.innerText = data.waterCounter;
+        grassEaterCountElement.innerText = data.grassEaterCounter;
+        predatorCountElement.innerText = data.predatorCounter;
+        damnCountElement.innerText = data.damnCounter;
+        krakinCountElement.innerText = data.krakinCounter;
+        //! Every time it creates new Canvas woth new matrix size
+        createCanvas(matrix[0].length * side, matrix.length * side)
+        //! clearing background by setting it to new grey color
+        background('#acacac');
+        //! Draw grassCount and grassEaterCount to HTML (use DOM objects to update information, yes, and use .innerText <- function)
+
+        //! Drawing and coloring RECTs
+        for (var i = 0; i < matrix.length; i++) {
+            for (var j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] == 1) {
+                    if (weather == "winter") {
+                        fill("white");
+                        rect(j * side, i * side, side, side);
+                    }
+                    if (weather == "spring") {
+                    fill("green");
+                    rect(j * side, i * side, side, side);
+                    }
+                    if (weather == "summer") {
+                        fill("yellow");
+                        rect(j * side, i * side, side, side);
+                    }
+                    if (weather == "autumn") {
+                        fill("orange");
+                        rect(j * side, i * side, side, side);
+                    }
+                } else if (matrix[i][j] == 2) {
+                    fill("#302b2b");
+                    rect(j * side, i * side, side, side);
+                } else if (matrix[i][j] == 0) {
+                    fill('#acacac');
+                    rect(j * side, i * side, side, side);
+                } else if (matrix[i][j] == 3) {
+                    fill('red');
+                    rect(j * side, i * side, side, side);
+                } else if (matrix[i][j] == 4) {
+                    fill('blue');
+                    rect(j * side, i * side, side, side);
+                } else if (matrix[i][j] == 5) {
+                    fill('rgb(119, 0, 255)');
+                    rect(j * side, i * side, side, side);
+                } else if (matrix[i][j] == 6) {
+                    fill('#00d9ff');
+                    rect(j * side, i * side, side, side);
+                }
+            }
+        }
+    }
+
+    socket.on("data", drawCreatures);
 }
-function drawmatrix(data) {
-  let grassCount = document.getElementById('garssCount');
-  grassCount.innerText = data.GrassStatics;
-  let garssEaterCount = document.getElementById('garssEaterCount');
-  garssEaterCount.innerText = data.Eatgrassstatics;
-  let predatorCount = document.getElementById('predatorCount');
-  predatorCount.innerText = data.predatorStatics;
-  let eaterCount = document.getElementById('eaterCount');
-  eaterCount.innerText = data.eaterStatics;
-  let krakinCount = document.getElementById('krakinCount');
-  krakinCount.innerText = data.krakinstatics;
-  matrix = data.matrix;
-
-
-
-  console.log(data.matrix);
-  console.log(data.GrassStatics);
-  console.log(data.Eatgrassstatics);
-  console.log(data.predatorStatics);
-  console.log(data.eaterStatics);
-  console.log(data.krakinstatics);
-  
-  
-  
-  
-  
-  
-  
-  
-  for (var y = 0; y < matrix.length; y++) {
-    for (var x = 0; x < matrix[y].length; x++) {
-      //console.log(1)
-      if (matrix[y][x] == 1) {
-        if (weather == "winter") {
-          fill("#81FF8E")
-          rect(y * side, x * side, side, side);
-        }
-        if (weather == "spring") {
-          fill("green");
-          rect(y * side, x * side, side, side);
-        }
-        if (weather == "summer") {
-          fill("#00FF00")
-          rect(y * side, x * side, side, side);
-        }
-        if (weather == "autumn") {
-          fill("#ff9900")
-          rect(y * side, x * side, side, side);
-        }
-      }
-      else if (matrix[y][x] == 0) {
-        fill("#acacac");
-        rect(y * side, x * side, side, side);
-      }
-      else if (matrix[y][x] == 2) {{
-        fill("yellow");
-        rect(y * side, x * side, side, side);
-      }
-      {
-        if (weather == "winter") {
-          rect(y * side, x * side, side, side);
-          fill("#FDA50F")
-        }
-        if (weather == "spring") {
-          fill("#FFD300");
-          rect(y * side, x * side, side, side);
-        }
-        if (weather == "summer") {
-          fill("#FCE205")
-          rect(y * side, x * side, side, side);
-        }
-        if (weather == "autumn") {
-          fill("#E4CD05")
-          rect(y * side, x * side, side, side);
-        }
-      }
-    }
-      else if (matrix[y][x] == 3) {{
-        fill("red");
-        rect(y * side, x * side, side, side);
-      }
-      {
-        if (weather == "winter") {
-          rect(y * side, x * side, side, side);
-          fill("#C21807")
-        }
-        if (weather == "spring") {
-          fill("#FF2400");
-          rect(y * side, x * side, side, side);
-        }
-        if (weather == "summer") {
-          fill("#800000")
-          rect(y * side, x * side, side, side);
-        }
-        if (weather == "autumn") {
-          fill("#B80F0A")
-          rect(y * side, x * side, side, side);
-        }
-      }
-    }
-      
-      else if (matrix[y][x] == 4) {{
-        fill("blue")
-        rect(y * side, x * side, side, side);
-      }
-      {
-        if (weather == "winter") {
-          rect(y * side, x * side, side, side);
-          fill("#000080")
-        }
-        if (weather == "spring") {
-          fill("#1134A6");
-          rect(y * side, x * side, side, side);
-        }
-        if (weather == "summer") {
-          fill("#003151")
-          rect(y * side, x * side, side, side);
-        }
-        if (weather == "autumn") {
-          fill("#0E4C92")
-          rect(y * side, x * side, side, side);
-        }
-      }
-    }
-      else if (matrix[y][x] == 5) {
-        if (weather == "winter") {
-          rect(y * side, x * side, side, side);
-          fill("purple;")
-        }
-        if (weather == "spring") {
-          fill("#793802");
-          rect(y * side, x * side, side, side);
-        }
-        if (weather == "summer") {
-          fill("#813F0B")
-          rect(y * side, x * side, side, side);
-        }
-        if (weather == "autumn") {
-          fill("brown")
-          rect(y * side, x * side, side, side);
-        }
-      }
-      rect(y * side, x * side, side, side);
-    }
-  }
-}
-socket.on("matrix", drawmatrix);
-socket.on("weather", function (w) {
-  weather = w;
-  //console.log(weather);
-  weather.innerHTML = weather
-});
-
-

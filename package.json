@@ -10,9 +10,16 @@
   "author": "ananun",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.0",
-    "react-autocomplete": "^1.8.1",
+    "express": "^4.16.4",
     "socket.io": "^2.2.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ananunaki/programming3_by_ananun.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ananunaki/programming3_by_ananun/issues"
+  },
+  "homepage": "https://github.com/ananunaki/programming3_by_ananun#readme",
   "devDependencies": {}
 }
